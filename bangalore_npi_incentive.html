@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Bangalore NPI Incentive Calculator</title>
+<title>Incentive Calculator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
     font-family: Arial, sans-serif;
     background-image: url("Image.jpg");
-    background-size: cover;
+    background-size: 100% 100%;
     background-position: center;
+    background-repeat: no-repeat;
     margin: 0;
     padding: 10px;
+    height: 700px;
 }
 
 .region-title {
@@ -19,60 +21,79 @@ body {
     font-size: 28px;
     font-weight: bold;
     color: #fff;
-    background: rgba(0, 80, 160, 0.75);
-    padding: 12px;
+    text-shadow: 3px 3px 8px black;
+    margin-bottom: 10px;
+    background: rgba(0, 110, 0, 0.65);
+    padding: 10px 15px;
     border-radius: 10px;
+    width: 85%;
 }
 
 h2 {
     text-align: center;
-    font-size: 22px;
+    font-size: 24px;
     color: #fff;
-    background: rgba(200, 16, 46, 0.85);
-    padding: 8px;
+    text-shadow: 3px 3px 8px black;
+    margin-bottom: 12px;
+    background: rgba(255, 0, 0, 0.75);
+    padding: 8px 12px;
     border-radius: 8px;
+    width: 65%;
+}
+
+.table-box {
+    overflow-x: auto;
+    width: 100%;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background: rgba(255,255,255,0.95);
+    background: rgba(255, 255, 255, 0.92);
     border-radius: 10px;
     font-size: 14px;
 }
 
 th, td {
     border: 1px solid #444;
-    padding: 8px;
+    padding: 10px;
     text-align: center;
 }
 
 th {
-    background: #b3d9ff;
+    background: #ffb48d;
+    font-weight: bold;
 }
 
 input {
-    width: 80px;
-    padding: 6px;
+    width: 90px;
+    padding: 7px;
+    border-radius: 6px;
+    border: 1px solid #666;
     text-align: center;
+    font-size: 15px;
 }
 
+.hidden-col { display: none; }
+#totalRow { display: none; }
+
 .btn {
-    margin-top: 20px;
+    margin-top: 24px;
     padding: 14px;
-    background: #0050a0;
+    background: #c8102e;
     border: none;
     color: white;
     font-size: 18px;
     border-radius: 8px;
-    width: 100%;
+    width: 90%;
     font-weight: bold;
 }
 
 /* Popup */
 .popup-bg {
     position: fixed;
-    inset: 0;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: rgba(0,0,0,0.6);
     display: none;
     justify-content: center;
@@ -81,20 +102,27 @@ input {
 
 .popup-box {
     background: white;
-    padding: 20px;
-    width: 90%;
+    padding: 24px;
+    width: 85%;
     max-width: 320px;
     border-radius: 12px;
     text-align: center;
+    animation: pop 0.3s ease-out;
+}
+
+@keyframes pop {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
 .close-btn {
-    background: #0050a0;
+    background: #c8102e;
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 6px;
     margin-top: 12px;
+    font-size: 16px;
 }
 </style>
 </head>
@@ -102,66 +130,143 @@ input {
 <body>
 
 <h1 class="region-title">Bangalore Region</h1>
-<h2>NPI Incentive Calculator</h2>
+<h2>Product Incentive</h2>
 
-<table id="tbl">
+<div class="table-box">
+<table id="incentiveTable">
 <tr>
     <th>Product</th>
     <th>Dosage / Acre</th>
     <th>Qty (L/Kg)</th>
     <th>Treated Acreage</th>
+    <th class="hidden-col">Incentive Rate</th>
+    <th class="hidden-col">Acre Multiplier</th>
 </tr>
 
-<tr><td>VELZO</td><td>800 GM</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.8">0</td></tr>
-<tr><td>COSUIT</td><td>500 GM</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.5">0</td></tr>
-<tr><td>VERIMARK</td><td>200 ML</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.2">0</td></tr>
-<tr><td>TUVENTA</td><td>50 ML</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.05">0</td></tr>
-<tr><td>TIRRACTO</td><td>80 ML</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.08">0</td></tr>
-<tr><td>VAYOBEL</td><td>4 KG</td><td><input oninput="calc()"></td><td class="acre" data-dose="4">0</td></tr>
-<tr><td>RESONEX</td><td>400 GM</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.4">0</td></tr>
-<tr><td>RHYME</td><td>250 ML</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.25">0</td></tr>
-<tr><td>BOLA</td><td>250 ML</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.25">0</td></tr>
+<tr>
+    <td>VELZO</td><td>800 GM</td>
+    <td><input type="number" min="0" oninput="reCalc()"></td>
+    <td class="tA">0</td>
+    <td class="hidden-col inc">30</td>
+    <td class="hidden-col mul">1.25</td>
+</tr>
 
+<tr>
+    <td>COSUIT</td><td>500 GM</td>
+    <td><input type="number" min="0" oninput="reCalc()"></td>
+    <td class="tA">0</td>
+    <td class="hidden-col inc">10</td>
+    <td class="hidden-col mul">2</td>
+</tr>
+
+<tr>
+    <td>VERIMARK</td><td>200 ML</td>
+    <td><input type="number" min="0" oninput="reCalc()"></td>
+    <td class="tA">0</td>
+    <td class="hidden-col inc">150</td>
+    <td class="hidden-col mul">5</td>
+</tr>
+
+<tr>
+    <td>TUVENTA</td><td>50 ML</td>
+    <td><input type="number" min="0" oninput="reCalc()"></td>
+    <td class="tA">0</td>
+    <td class="hidden-col inc">200</td>
+    <td class="hidden-col mul">20</td>
+</tr>
+
+<tr>
+    <td>TIRRACTO</td><td>80 ML</td>
+    <td><input type="number" min="0" oninput="reCalc()"></td>
+    <td class="tA">0</td>
+    <td class="hidden-col inc">75</td>
+    <td class="hidden-col mul">12.5</td>
+</tr>
+
+<tr>
+    <td>VAYOBEL</td><td>4 KG</td>
+    <td><input type="number" min="0" oninput="reCalc()"></td>
+    <td class="tA">0</td>
+    <td class="hidden-col inc">10</td>
+    <td class="hidden-col mul">0.25</td>
+</tr>
+
+<tr>
+    <td>RESONEX</td><td>400 GM</td>
+    <td><input type="number" min="0" oninput="reCalc()"></td>
+    <td class="tA">0</td>
+    <td class="hidden-col inc">10</td>
+    <td class="hidden-col mul">2.5</td>
+</tr>
+
+<tr>
+    <td>RHYME</td><td>250 ML</td>
+    <td><input type="number" min="0" oninput="reCalc()"></td>
+    <td class="tA">0</td>
+    <td class="hidden-col inc">20</td>
+    <td class="hidden-col mul">4</td>
+</tr>
+
+<tr>
+    <td>BOLA</td><td>250 ML</td>
+    <td><input type="number" min="0" oninput="reCalc()"></td>
+    <td class="tA">0</td>
+    <td class="hidden-col inc">10</td>
+    <td class="hidden-col mul">4</td>
+</tr>
+
+<tr id="totalRow">
+    <th colspan="3">Total</th>
+    <th colspan="3" id="totalValue">0</th>
+</tr>
 </table>
+</div>
 
 <button class="btn" onclick="showPopup()">Calculate Incentive</button>
 
 <div class="popup-bg" id="popup">
 <div class="popup-box">
-<h3>🎉 CONGRATULATIONS 🎉</h3>
-<p>You have treated</p>
-<h2 id="totalAcre">0 Acres</h2>
-<p>You have earned</p>
-<h2 id="totalInc">₹0</h2>
-<button class="close-btn" onclick="closePopup()">OK</button>
+    <h3>CONGRATULATIONS</h3>
+    <p>You have treated</p>
+    <h2 id="acrePop">0 Acres</h2>
+    <p>You have earned</p>
+    <h2 id="popValue">Rs 0 /-</h2>
+    <button class="close-btn" onclick="closePopup()">OK</button>
 </div>
 </div>
 
 <script>
-const rates = [30,10,150,200,75,10,10,20,10];
+function reCalc() {
+    let table = document.getElementById("incentiveTable");
+    let totalInc = 0;
+    let totalAcre = 0;
 
-function calc(){
-    let totalA = 0, totalI = 0;
-    document.querySelectorAll("#tbl tr").forEach((row,i)=>{
-        if(i===0) return;
-        let qty = row.cells[2].children[0].value || 0;
-        let dose = row.cells[3].dataset.dose;
-        let acre = qty / dose;
-        row.cells[3].innerText = acre.toFixed(2);
-        totalA += acre;
-        totalI += qty * rates[i-1];
-    });
-    window._acre = totalA;
-    window._inc = totalI;
+    for (let i = 1; i <= 9; i++) {
+        let qty = parseFloat(table.rows[i].cells[2].children[0].value) || 0;
+        let mul = parseFloat(table.rows[i].cells[5].innerText);
+        let inc = parseFloat(table.rows[i].cells[4].innerText);
+
+        let treated = qty * mul;
+        table.rows[i].cells[3].innerText = treated.toFixed(2);
+
+        totalAcre += treated;
+        totalInc += qty * inc;
+    }
+
+    window.finalAcre = totalAcre;
+    window.finalInc = totalInc;
 }
 
-function showPopup(){
-    document.getElementById("totalAcre").innerText = window._acre.toFixed(2)+" Acres";
-    document.getElementById("totalInc").innerText = "₹"+window._inc.toFixed(0);
-    document.getElementById("popup").style.display="flex";
+function showPopup() {
+    document.getElementById("acrePop").innerText =
+        window.finalAcre.toFixed(2) + " Acres";
+    document.getElementById("popValue").innerText =
+        "Rs " + window.finalInc.toFixed(0) + " /-";
+    document.getElementById("popup").style.display = "flex";
 }
-function closePopup(){
-    document.getElementById("popup").style.display="none";
+
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
 }
 </script>
 
