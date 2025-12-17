@@ -1,274 +1,346 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Incentive Calculator</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <title>Incentive Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background-image: url("Image.jpg");
-    background-size: 100% 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-    margin: 0;
-    padding: 10px;
-    height: 700px;
-}
+  <style>
+    /* ===== Page background (no image) ===== */
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef3f8;         /* light grey-blue */
+      margin: 0;
+      padding: 12px;
+    }
 
-.region-title {
-    text-align: center;
-    font-size: 28px;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 3px 3px 8px black;
-    margin-bottom: 10px;
-    background: rgba(0, 110, 0, 0.65);
-    padding: 10px 15px;
-    border-radius: 10px;
-    width: 85%;
-}
+    /* ===== FMC logo top-right ===== */
+    .logo {
+      position: fixed;
+      top: 10px;
+      right: 12px;
+      z-index: 2000;
+      pointer-events: none; /* logo won't block clicks */
+    }
+    .logo img {
+      width: 90px;
+      max-width: 25vw;
+      height: auto;
+    }
+    @media (max-width: 600px) {
+      .logo img { width: 65px; }
+    }
 
-h2 {
-    text-align: center;
-    font-size: 24px;
-    color: #fff;
-    text-shadow: 3px 3px 8px black;
-    margin-bottom: 12px;
-    background: rgba(255, 0, 0, 0.75);
-    padding: 8px 12px;
-    border-radius: 8px;
-    width: 65%;
-}
+    /* ===== Outer card container (like your screenshot) ===== */
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+      max-width: 980px;
+      margin: 0 auto;
+    }
 
-.table-box {
-    overflow-x: auto;
-    width: 100%;
-}
+    /* ===== Headers (same placement as Bellary, new colors) ===== */
+    .region-title {
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+      color: #ffffff;
+      background: linear-gradient(90deg, #0b5ed7, #0d6efd);
+      padding: 12px;
+      border-radius: 14px;
+      margin: 6px auto 14px;
+      width: 85%;
+    }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: rgba(255, 255, 255, 0.92);
-    border-radius: 10px;
-    font-size: 14px;
-}
+    h2 {
+      text-align: center;
+      font-size: 22px;
+      color: #ffffff;
+      margin: 0 auto 14px;
+      background: #0d6efd;
+      padding: 10px;
+      border-radius: 12px;
+      width: 65%;
+    }
 
-th, td {
-    border: 1px solid #444;
-    padding: 10px;
-    text-align: center;
-}
+    /* ===== Table wrapper ===== */
+    .table-box {
+      overflow-x: auto;
+      width: 100%;
+    }
 
-th {
-    background: #ffb48d;
-    font-weight: bold;
-}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 14px;
+      font-size: 14px;
+      overflow: hidden; /* keeps rounded corners clean */
+    }
 
-input {
-    width: 90px;
-    padding: 7px;
-    border-radius: 6px;
-    border: 1px solid #666;
-    text-align: center;
-    font-size: 15px;
-}
+    th, td {
+      border: 1px solid #d6deea;
+      padding: 10px;
+      text-align: center;
+    }
 
-.hidden-col { display: none; }
-#totalRow { display: none; }
+    th {
+      background: #0d6efd;
+      color: #ffffff;
+      font-weight: bold;
+      border: none;
+    }
 
-.btn {
-    margin-top: 24px;
-    padding: 14px;
-    background: #c8102e;
-    border: none;
-    color: white;
-    font-size: 18px;
-    border-radius: 8px;
-    width: 90%;
-    font-weight: bold;
-}
+    input {
+      width: 90px;
+      padding: 7px;
+      border-radius: 10px;
+      border: 1px solid #c8d3e2;
+      text-align: center;
+      font-size: 15px;
+      outline: none;
+    }
+    input:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 3px rgba(13,110,253,0.15);
+    }
 
-/* Popup */
-.popup-bg {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    justify-content: center;
-    align-items: center;
-}
+    .hidden-col { display: none; }
+    #totalRow { display: none; }
 
-.popup-box {
-    background: white;
-    padding: 24px;
-    width: 85%;
-    max-width: 320px;
-    border-radius: 12px;
-    text-align: center;
-    animation: pop 0.3s ease-out;
-}
+    /* ===== Main action button (like screenshot) ===== */
+    .btn {
+      margin-top: 24px;
+      padding: 14px;
+      background: #0d6efd;
+      border: none;
+      color: white;
+      font-size: 18px;
+      border-radius: 12px;
+      width: 100%;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn:active { transform: translateY(1px); }
 
-@keyframes pop {
-    from { transform: scale(0.7); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
+    /* ===== Popup (same as Bellary behavior) ===== */
+    .popup-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+    }
 
-.close-btn {
-    background: #c8102e;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    margin-top: 12px;
-    font-size: 16px;
-}
-</style>
+    .popup-box {
+      background: white;
+      padding: 24px;
+      width: 85%;
+      max-width: 340px;
+      border-radius: 14px;
+      text-align: center;
+      animation: pop 0.3s ease-out;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.25);
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .popup-box h3 {
+      margin: 0 0 8px;
+    }
+
+    .close-btn {
+      background: #0d6efd;
+      color: white;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 10px;
+      margin-top: 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
+  <!-- FMC Logo -->
+  <div class="logo">
+    <img src="fmc_logo.png" alt="FMC Logo" />
+  </div>
 
-<h1 class="region-title">Bangalore Region</h1>
-<h2>Product Incentive</h2>
+  <div class="card">
+    <h1 class="region-title">Bangalore Region</h1>
+    <h2>Product Incentive</h2>
 
-<div class="table-box">
-<table id="incentiveTable">
-<tr>
-    <th>Product</th>
-    <th>Dosage / Acre</th>
-    <th>Qty (L/Kg)</th>
-    <th>Treated Acreage</th>
-    <th class="hidden-col">Incentive Rate</th>
-    <th class="hidden-col">Acre Multiplier</th>
-</tr>
+    <div class="table-box">
+      <table id="incentiveTable">
+        <tbody>
+          <tr>
+            <th>Product</th>
+            <th>Dosage / Acre</th>
+            <th>Qty (Ltr/Kg)</th>
+            <th>Treated Acreage</th>
+            <th class="hidden-col">Incentive Rate</th>
+            <th class="hidden-col">Acre Multiplier</th>
+          </tr>
 
-<tr>
-    <td>VELZO</td><td>800 GM</td>
-    <td><input type="number" min="0" oninput="reCalc()"></td>
-    <td class="tA">0</td>
-    <td class="hidden-col inc">30</td>
-    <td class="hidden-col mul">1.25</td>
-</tr>
+          <!-- Multipliers are 1/dosage in L or Kg per acre:
+               800g=0.8kg => 1/0.8=1.25
+               500g=0.5kg => 2
+               200ml=0.2L => 5
+               50ml=0.05L => 20
+               80ml=0.08L => 12.5
+               4kg => 0.25
+               400g=0.4kg => 2.5
+               250ml=0.25L => 4
+          -->
 
-<tr>
-    <td>COSUIT</td><td>500 GM</td>
-    <td><input type="number" min="0" oninput="reCalc()"></td>
-    <td class="tA">0</td>
-    <td class="hidden-col inc">10</td>
-    <td class="hidden-col mul">2</td>
-</tr>
+          <tr>
+            <td>VELZO</td>
+            <td>800 GM</td>
+            <td><input type="number" min="0" placeholder="Ltr/Kg" oninput="reCalc()"></td>
+            <td class="tA">0</td>
+            <td class="inc hidden-col">30</td>
+            <td class="mul hidden-col">1.25</td>
+          </tr>
 
-<tr>
-    <td>VERIMARK</td><td>200 ML</td>
-    <td><input type="number" min="0" oninput="reCalc()"></td>
-    <td class="tA">0</td>
-    <td class="hidden-col inc">150</td>
-    <td class="hidden-col mul">5</td>
-</tr>
+          <tr>
+            <td>COSUIT</td>
+            <td>500 GM</td>
+            <td><input type="number" min="0" placeholder="Ltr/Kg" oninput="reCalc()"></td>
+            <td class="tA">0</td>
+            <td class="inc hidden-col">10</td>
+            <td class="mul hidden-col">2</td>
+          </tr>
 
-<tr>
-    <td>TUVENTA</td><td>50 ML</td>
-    <td><input type="number" min="0" oninput="reCalc()"></td>
-    <td class="tA">0</td>
-    <td class="hidden-col inc">200</td>
-    <td class="hidden-col mul">20</td>
-</tr>
+          <tr>
+            <td>VERIMARK</td>
+            <td>200 ML</td>
+            <td><input type="number" min="0" placeholder="Ltr/Kg" oninput="reCalc()"></td>
+            <td class="tA">0</td>
+            <td class="inc hidden-col">150</td>
+            <td class="mul hidden-col">5</td>
+          </tr>
 
-<tr>
-    <td>TIRRACTO</td><td>80 ML</td>
-    <td><input type="number" min="0" oninput="reCalc()"></td>
-    <td class="tA">0</td>
-    <td class="hidden-col inc">75</td>
-    <td class="hidden-col mul">12.5</td>
-</tr>
+          <tr>
+            <td>TUVENTA</td>
+            <td>50 ML</td>
+            <td><input type="number" min="0" placeholder="Ltr/Kg" oninput="reCalc()"></td>
+            <td class="tA">0</td>
+            <td class="inc hidden-col">200</td>
+            <td class="mul hidden-col">20</td>
+          </tr>
 
-<tr>
-    <td>VAYOBEL</td><td>4 KG</td>
-    <td><input type="number" min="0" oninput="reCalc()"></td>
-    <td class="tA">0</td>
-    <td class="hidden-col inc">10</td>
-    <td class="hidden-col mul">0.25</td>
-</tr>
+          <tr>
+            <td>TIRRACTO</td>
+            <td>80 ML</td>
+            <td><input type="number" min="0" placeholder="Ltr/Kg" oninput="reCalc()"></td>
+            <td class="tA">0</td>
+            <td class="inc hidden-col">75</td>
+            <td class="mul hidden-col">12.5</td>
+          </tr>
 
-<tr>
-    <td>RESONEX</td><td>400 GM</td>
-    <td><input type="number" min="0" oninput="reCalc()"></td>
-    <td class="tA">0</td>
-    <td class="hidden-col inc">10</td>
-    <td class="hidden-col mul">2.5</td>
-</tr>
+          <tr>
+            <td>VAYOBEL</td>
+            <td>4 KG</td>
+            <td><input type="number" min="0" placeholder="Ltr/Kg" oninput="reCalc()"></td>
+            <td class="tA">0</td>
+            <td class="inc hidden-col">10</td>
+            <td class="mul hidden-col">0.25</td>
+          </tr>
 
-<tr>
-    <td>RHYME</td><td>250 ML</td>
-    <td><input type="number" min="0" oninput="reCalc()"></td>
-    <td class="tA">0</td>
-    <td class="hidden-col inc">20</td>
-    <td class="hidden-col mul">4</td>
-</tr>
+          <tr>
+            <td>RESONEX</td>
+            <td>400 GM</td>
+            <td><input type="number" min="0" placeholder="Ltr/Kg" oninput="reCalc()"></td>
+            <td class="tA">0</td>
+            <td class="inc hidden-col">10</td>
+            <td class="mul hidden-col">2.5</td>
+          </tr>
 
-<tr>
-    <td>BOLA</td><td>250 ML</td>
-    <td><input type="number" min="0" oninput="reCalc()"></td>
-    <td class="tA">0</td>
-    <td class="hidden-col inc">10</td>
-    <td class="hidden-col mul">4</td>
-</tr>
+          <tr>
+            <td>RHYME</td>
+            <td>250 ML</td>
+            <td><input type="number" min="0" placeholder="Ltr/Kg" oninput="reCalc()"></td>
+            <td class="tA">0</td>
+            <td class="inc hidden-col">20</td>
+            <td class="mul hidden-col">4</td>
+          </tr>
 
-<tr id="totalRow">
-    <th colspan="3">Total</th>
-    <th colspan="3" id="totalValue">0</th>
-</tr>
-</table>
-</div>
+          <tr>
+            <td>BOLA</td>
+            <td>250 ML</td>
+            <td><input type="number" min="0" placeholder="Ltr/Kg" oninput="reCalc()"></td>
+            <td class="tA">0</td>
+            <td class="inc hidden-col">10</td>
+            <td class="mul hidden-col">4</td>
+          </tr>
 
-<button class="btn" onclick="showPopup()">Calculate Incentive</button>
+          <tr id="totalRow">
+            <th colspan="3">Total</th>
+            <th colspan="3" id="totalValue">0</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-<div class="popup-bg" id="popup">
-<div class="popup-box">
-    <h3>CONGRATULATIONS</h3>
-    <p>You have treated</p>
-    <h2 id="acrePop">0 Acres</h2>
-    <p>You have earned</p>
-    <h2 id="popValue">Rs 0 /-</h2>
-    <button class="close-btn" onclick="closePopup()">OK</button>
-</div>
-</div>
+    <button class="btn" onclick="showPopup()">Calculate Incentive</button>
+  </div>
 
-<script>
-function reCalc() {
-    let table = document.getElementById("incentiveTable");
-    let totalInc = 0;
-    let totalAcre = 0;
+  <div class="popup-bg" id="popup">
+    <div class="popup-box">
+      <h3>CONGRATULATIONS</h3>
+      <p>YOU HAVE TREATED</p>
+      <h2 id="acrePop" style="width:auto; margin: 0 auto 10px;">0 Acres</h2>
+      <p>YOU HAVE EARNED</p>
+      <h2 id="popValue" style="width:auto; margin: 0 auto;">Rs 0 /-</h2>
+      <button class="close-btn" onclick="closePopup()">OK</button>
+    </div>
+  </div>
 
-    for (let i = 1; i <= 9; i++) {
-        let qty = parseFloat(table.rows[i].cells[2].children[0].value) || 0;
-        let mul = parseFloat(table.rows[i].cells[5].innerText);
-        let inc = parseFloat(table.rows[i].cells[4].innerText);
+  <script>
+    function reCalc() {
+      const table = document.getElementById("incentiveTable");
+      let totalInc = 0;
+      let totalAcre = 0;
 
-        let treated = qty * mul;
+      // rows 1..9 are product rows
+      for (let i = 1; i <= 9; i++) {
+        const qty = parseFloat(table.rows[i].cells[2].children[0].value) || 0;
+        const mul = parseFloat(table.rows[i].cells[5].innerText);
+        const rate = parseFloat(table.rows[i].cells[4].innerText);
+
+        const treated = qty * mul; // treated acreage
         table.rows[i].cells[3].innerText = treated.toFixed(2);
 
         totalAcre += treated;
-        totalInc += qty * inc;
+        totalInc += qty * rate;    // incentive = qty * rate
+      }
+
+      window.finalAcre = totalAcre;
+      window.finalInc = totalInc;
     }
 
-    window.finalAcre = totalAcre;
-    window.finalInc = totalInc;
-}
+    function showPopup() {
+      const acres = (window.finalAcre || 0).toFixed(2);
+      const inc = (window.finalInc || 0).toFixed(0);
 
-function showPopup() {
-    document.getElementById("acrePop").innerText =
-        window.finalAcre.toFixed(2) + " Acres";
-    document.getElementById("popValue").innerText =
-        "Rs " + window.finalInc.toFixed(0) + " /-";
-    document.getElementById("popup").style.display = "flex";
-}
+      document.getElementById("acrePop").innerText = acres + " Acres";
+      document.getElementById("popValue").innerText = "Rs " + inc + " /-";
+      document.getElementById("popup").style.display = "flex";
+    }
 
-function closePopup() {
-    document.getElementById("popup").style.display = "none";
-}
-</script>
-
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+    }
+  </script>
 </body>
 </html>
