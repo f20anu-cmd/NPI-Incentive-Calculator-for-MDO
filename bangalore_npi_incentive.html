@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bangalore NPI Incentive Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-image: url("Image.jpg");
+    background-size: cover;
+    background-position: center;
+    margin: 0;
+    padding: 10px;
+}
+
+.region-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(0, 80, 160, 0.75);
+    padding: 12px;
+    border-radius: 10px;
+}
+
+h2 {
+    text-align: center;
+    font-size: 22px;
+    color: #fff;
+    background: rgba(200, 16, 46, 0.85);
+    padding: 8px;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.95);
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+th, td {
+    border: 1px solid #444;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background: #b3d9ff;
+}
+
+input {
+    width: 80px;
+    padding: 6px;
+    text-align: center;
+}
+
+.btn {
+    margin-top: 20px;
+    padding: 14px;
+    background: #0050a0;
+    border: none;
+    color: white;
+    font-size: 18px;
+    border-radius: 8px;
+    width: 100%;
+    font-weight: bold;
+}
+
+/* Popup */
+.popup-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-box {
+    background: white;
+    padding: 20px;
+    width: 90%;
+    max-width: 320px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.close-btn {
+    background: #0050a0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    margin-top: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<h1 class="region-title">Bangalore Region</h1>
+<h2>NPI Incentive Calculator</h2>
+
+<table id="tbl">
+<tr>
+    <th>Product</th>
+    <th>Dosage / Acre</th>
+    <th>Qty (L/Kg)</th>
+    <th>Treated Acreage</th>
+</tr>
+
+<tr><td>VELZO</td><td>800 GM</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.8">0</td></tr>
+<tr><td>COSUIT</td><td>500 GM</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.5">0</td></tr>
+<tr><td>VERIMARK</td><td>200 ML</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.2">0</td></tr>
+<tr><td>TUVENTA</td><td>50 ML</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.05">0</td></tr>
+<tr><td>TIRRACTO</td><td>80 ML</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.08">0</td></tr>
+<tr><td>VAYOBEL</td><td>4 KG</td><td><input oninput="calc()"></td><td class="acre" data-dose="4">0</td></tr>
+<tr><td>RESONEX</td><td>400 GM</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.4">0</td></tr>
+<tr><td>RHYME</td><td>250 ML</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.25">0</td></tr>
+<tr><td>BOLA</td><td>250 ML</td><td><input oninput="calc()"></td><td class="acre" data-dose="0.25">0</td></tr>
+
+</table>
+
+<button class="btn" onclick="showPopup()">Calculate Incentive</button>
+
+<div class="popup-bg" id="popup">
+<div class="popup-box">
+<h3>🎉 CONGRATULATIONS 🎉</h3>
+<p>You have treated</p>
+<h2 id="totalAcre">0 Acres</h2>
+<p>You have earned</p>
+<h2 id="totalInc">₹0</h2>
+<button class="close-btn" onclick="closePopup()">OK</button>
+</div>
+</div>
+
+<script>
+const rates = [30,10,150,200,75,10,10,20,10];
+
+function calc(){
+    let totalA = 0, totalI = 0;
+    document.querySelectorAll("#tbl tr").forEach((row,i)=>{
+        if(i===0) return;
+        let qty = row.cells[2].children[0].value || 0;
+        let dose = row.cells[3].dataset.dose;
+        let acre = qty / dose;
+        row.cells[3].innerText = acre.toFixed(2);
+        totalA += acre;
+        totalI += qty * rates[i-1];
+    });
+    window._acre = totalA;
+    window._inc = totalI;
+}
+
+function showPopup(){
+    document.getElementById("totalAcre").innerText = window._acre.toFixed(2)+" Acres";
+    document.getElementById("totalInc").innerText = "₹"+window._inc.toFixed(0);
+    document.getElementById("popup").style.display="flex";
+}
+function closePopup(){
+    document.getElementById("popup").style.display="none";
+}
+</script>
+
+</body>
+</html>
